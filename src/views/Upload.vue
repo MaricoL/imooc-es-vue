@@ -22,9 +22,9 @@ export default {
     return {
       client: new OSS({
         region: 'oss-cn-shanghai',
-        bucket: 'imooc-es-my',
-        accessKeyId: 'LTAI4GBULpovcRV6zgTCwXhD',
-        accessKeySecret: '0NP4zMwBVAM5YiaiQJj2d66ahkXtmC'
+        bucket: 'imooc-es-my'
+        // accessKeyId: 'LTAI4GBULpovcRV6zgTCwXhD',
+        // accessKeySecret: '0NP4zMwBVAM5YiaiQJj2d66ahkXtmC'
       }),
       imageList: [],
       // 是否正在上传
