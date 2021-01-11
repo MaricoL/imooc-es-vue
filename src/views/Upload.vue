@@ -23,8 +23,7 @@ export default {
       client: new OSS({
         region: 'oss-cn-shanghai',
         bucket: 'imooc-es-my'
-        // accessKeyId: 'LTAI4GBULpovcRV6zgTCwXhD',
-        // accessKeySecret: '0NP4zMwBVAM5YiaiQJj2d66ahkXtmC'
+        // 需要添加 accessKeyId 和 accessKeySecret
       }),
       imageList: [],
       // 是否正在上传
@@ -57,17 +56,17 @@ export default {
         files.push(file)
       }
 
-      this.uploadFilesByOSS(files)
+      this.uploadFilesByOSS2(files)
     },
     // 上传图片到阿里云OSS
-    uploadFilesByOSS (files) {
+    uploadFilesByOSS1 (files) {
       this.isUploading = true
       const uploadRequest = []
       for (const file of files) {
         uploadRequest.push(new Promise((resolve, reject) => {
           this.client.put(`${Math.random()}-${file.name}`, file)
             .then(res => {
-              console.log(res)
+              // console.log(res)
               // 将上传成功的图片显示在页面中
               //   this.imageList = [...this.imageList, res.url]
               resolve(res.url)
@@ -78,16 +77,35 @@ export default {
             })
         }))
       }
-      Promise.all(uploadRequest)
+      // Promise.all(uploadRequest)
+      //   .then(res => {
+      //     console.log(res)
+      //     // 将上传成功的图片显示在页面中
+      //     this.imageList = res
+      //     this.isUploading = false
+      //   })
+      //   .catch(err => {
+      //     console.log(err)
+      //   })
+
+      // 优化 Promise.all() 方法：如果其中一张照片上传失败，则会认为所有的都失败，导致一张照片都显示不出来
+      Promise.allSettled(uploadRequest)
         .then(res => {
-          console.log(res)
-          // 将上传成功的图片显示在页面中
-          this.imageList = res
+          // 遍历出 所有成功上传（fulfilled）的照片
+          this.imageList = res.filter(item => item.status === 'fulfilled').map(item => item.value)
           this.isUploading = false
         })
-        .catch(err => {
-          console.log(err)
-        })
+    },
+
+    // 使用 async/await 重写 uploadFilesByOSS1
+    async uploadFilesByOSS2 (files) {
+      const imgs = []
+      for (const file of files) {
+        const result = await this.client.put(`${Math.random()}-${file.name}`, file)
+        imgs.push(result.url)
+      }
+      this.imageList = imgs
+      this.isUploading = false
     }
   }
 }
