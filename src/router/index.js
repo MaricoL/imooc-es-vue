@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import User from '../views/User.vue'
-import Upload from '../views/Upload.vue'
+// import Upload from '../views/Upload.vue'
 
 Vue.use(VueRouter)
 
@@ -18,7 +18,8 @@ const routes = [
   }, {
     path: '/upload',
     name: 'Upload',
-    component: Upload
+    // 组件按需加载
+    component: () => import('../views/Upload.vue')
   },
   {
     path: '/about',
